@@ -1,0 +1,87 @@
+# AWS SAM template version
+AWSTemplateFormatVersion: '2010-09-09'
+# AWS SAM transform version
+Transform: AWS::Serverless-2016-10-31
+# Resources list 
+Resources:
+  #s3 bucket should be created manually.
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: 'demo-dev-classhd'
+  # creating the Dyanmodb table with items as rolename and requesttime.
+  DynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: 'api_call'
+      AttributeDefinitions:
+        - AttributeName: rolename
+          AttributeType: S
+        - AttributeName: requesttime
+          AttributeType: S
+      KeySchema:
+        - AttributeName: rolename
+          KeyType: HASH
+        - AttributeName: requesttime
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+  
+  # creating glue crawler to crawl the s3 data.
+  GlueCrawler:
+    Type: AWS::Glue::Crawler
+    Properties:
+      Name: 'api_table'
+      Role: arn:aws:iam::339712708642:role/demo_glue_role
+      DatabaseName: 'test_db'
+      Targets:
+        S3Targets:
+          - Path: 's3://demo-dev-classhd/uploads'
+  # creating the lambda fuction which can generate the signed URL
+  LambdaFunction1:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'apitos3lambda'
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Role: arn:aws:iam::339712708642:role/service-role/apitos3lambda-role-zb2hzzv7
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref DynamoDBTable
+          S3_BUCKET: !Ref S3Bucket
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref DynamoDBTable
+        - S3CrudPolicy:
+            BucketName: !Ref S3Bucket
+  # creating the lambda function to start the glue crawler
+  LambdaFunction2:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: 'call_crawler'
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.9
+      Role: arn:aws:iam::339712708642:role/service-role/apitos3lambda-role-zb2hzzv7
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref GlueCrawler
+  # creating HTTP api gateway     
+  ApiGateway:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: v1
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "httpapicall"
+        paths:
+          /authenticate:
+            post:
+              x-amazon-apigateway-integration:
+                uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${LambdaFunction1.Arn}/invocations
+                httpMethod: POST
+                type: aws_proxy
+
+Outputs:
+  ApiUrl:
+    Description: "API Gateway endpoint URL"
+    Value: !Sub "https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/prod/authenticate"
