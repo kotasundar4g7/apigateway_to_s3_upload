@@ -4,12 +4,13 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 # Resources list 
 Resources:
+# creating the http api 
   MyHttpApi:
     Type: AWS::Serverless::HttpApi
     Properties:
       Name: http_api_call
-      StageName: v1
-      
+      StageName: v1 # giving stage name as v1(version 1)
+  #creating DynamoDB table with rolename and requesttime as items.  
   DynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -25,7 +26,7 @@ Resources:
         - AttributeName: requesttime
           KeyType: RANGE
       BillingMode: PAY_PER_REQUEST
-  
+  # creating the lambda function which will trigger by api gateway and records the meta data to dynamoDB and generate the pre-sigmned URL.
   LambdaFunction1:
     Type: AWS::Serverless::Function
     Properties:
@@ -50,7 +51,7 @@ Resources:
             ApiId: !Ref MyHttpApi
             Path: /authenticate
             Method: post  
-  
+  # creating the glue crawler to fetch schema of a s3 upload file into glue catalog table.
   GlueCrawler:
     Type: AWS::Glue::Crawler
     Properties:
@@ -60,7 +61,7 @@ Resources:
       Targets:
         S3Targets:
           - Path: 's3://demo-dev-classhd/testing_data'
-  
+  # creating a lambda function to start the glue crawler with s3 as event.
   LambdaFunction2:
     Type: AWS::Serverless::Function
     Properties:
