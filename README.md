@@ -13,21 +13,21 @@ The application uses several AWS resources, including Lambda functions and an AP
 2. aws sam
 3. python
 
-# below are chnages need to be done in the template.yaml file.
-line 14 need to give http apu gateway name
-line 14 need to give stage name.
-line 21 need to give the DynamoDB table name
-line 23 and 28 need to give the items of dynamoDB 
-line 23 and 28 need to give the items of dynamoDB 
-line 23 give lambda function name for generating the presigned URL.
-line 23 need to give the role name for creating t5he lambda fucntion
-line 23 and 24 need to change the s3 bucket name.
-line 23 neeed give the crawler name 
-line 23 need to give the IAM role name for glue crawler.
-line 23 need to give the database name of glue catalog.
-line 23 need to give the s3 path of upload file.
-line 23  need to give lambda name to start the glue crawler.
-line 23 need to give IAM role name to create the lambda function.
+# below are changes need to be done in the template.yaml file.
+1. line 14 need to give http apu gateway name
+2. line 14 need to give stage name.
+3. line 21 need to give the DynamoDB table name
+4. line 23 and 28 need to give the items of dynamoDB 
+5. line 23 and 28 need to give the items of dynamoDB 
+6. line 23 give lambda function name for generating the presigned URL.
+7. line 23 need to give the role name for creating t5he lambda fucntion
+8. line 23 and 24 need to change the s3 bucket name.
+9. line 23 neeed give the crawler name 
+10. line 23 need to give the IAM role name for glue crawler.
+11. line 23 need to give the database name of glue catalog.
+12. line 23 need to give the s3 path of upload file.
+13. line 23  need to give lambda name to start the glue crawler.
+14. line 23 need to give IAM role name to create the lambda function.
 
 ## Deploy the application
 
