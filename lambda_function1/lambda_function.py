@@ -1,14 +1,13 @@
-
 import json
 import boto3
 import secrets
 from datetime import datetime, timedelta
 import os
  
-dynamodb = boto3.client('dynamodb')
-s3 = boto3.client('s3')
-DYNAMODB_TABLE = os.environ['DYNAMODB_TABLE']
-S3_BUCKET = os.environ['S3_BUCKET']
+dynamodb = boto3.client('dynamodb') # creating the boto3 client for DyanamoDB.
+s3 = boto3.client('s3') # creating the boto3 client for s3.
+DYNAMODB_TABLE = os.environ['DYNAMODB_TABLE'] # fetch the dynamoDB table name.
+S3_BUCKET = os.environ['S3_BUCKET']# fetch the s3 bucket name.
  
 def lambda_handler(event, context):
     try:
@@ -57,7 +56,7 @@ def lambda_handler(event, context):
                 'key': key
             })
         } # returning the signed URL to the api
- 
+   
     except Exception as e:
         print(f"Error: {e}")
         return {
@@ -65,5 +64,5 @@ def lambda_handler(event, context):
             'body': json.dumps({
                 'message': 'Internal server error',
                 'error': str(e)
-            })
+            }) # return the errors if any errors happen in the above code.
         }
