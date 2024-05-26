@@ -12,7 +12,24 @@ The application uses several AWS resources, including Lambda functions and an AP
 1. aws cli
 2. aws sam
 3. python
-## Deploy the sample application
+
+# below are chnages need to be done in the template.yaml file.
+line 14 need to give http apu gateway name
+line 14 need to give stage name.
+line 21 need to give the DynamoDB table name
+line 23 and 28 need to give the items of dynamoDB 
+line 23 and 28 need to give the items of dynamoDB 
+line 23 give lambda function name for generating the presigned URL.
+line 23 need to give the role name for creating t5he lambda fucntion
+line 23 and 24 need to change the s3 bucket name.
+line 23 neeed give the crawler name 
+line 23 need to give the IAM role name for glue crawler.
+line 23 need to give the database name of glue catalog.
+line 23 need to give the s3 path of upload file.
+line 23  need to give lambda name to start the glue crawler.
+line 23 need to give IAM role name to create the lambda function.
+
+## Deploy the application
 
 The Serverless Application Model Command Line Interface (SAM CLI) is an extension of the AWS CLI that adds functionality for building and testing Lambda applications. It uses Docker to run your functions in an Amazon Linux environment that matches Lambda. It can also emulate your application's build environment and API.
 
